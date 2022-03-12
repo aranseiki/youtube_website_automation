@@ -82,7 +82,7 @@ try:
 
         sleep(3)
 
-        youtube.filter_search('UPLOAD DATE', 'TODAY', 'XPATH')
+        youtube.filter_search('features', 'location', 'xpath')
 
         sleep(1)
 
