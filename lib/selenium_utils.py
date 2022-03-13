@@ -195,7 +195,7 @@ def choose_type_element(type_element):
     return type_element
 
 
-def find_very_elements(selector, type_element='CSS_SELECTOR'):
+def search_very_elements(selector, type_element='CSS_SELECTOR'):
     """
     Definition
     ----------
@@ -310,7 +310,6 @@ def extract_text(selector, type_element='CSS_SELECTOR'):
 
 
 def get_attribute(selector, attribute, type_element='CSS_SELECTOR'):
-    
     type_element = choose_type_element(type_element)
     element = browser.find_element(type_element, selector)
     center_element(selector, type_element)
@@ -349,7 +348,6 @@ def click_element(selector, type_element='CSS_SELECTOR'):
         wait_page_loaded()
     except:
         ...
-
 
 
 def write_in_element(selector, text, type_element='CSS_SELECTOR'):

@@ -1,5 +1,5 @@
-import pdb
-from selenium_functions import *
+#import pdb
+#from selenium_functions import *
 
 #global nome_navegador
 

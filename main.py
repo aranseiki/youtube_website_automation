@@ -60,9 +60,8 @@ try:
         selector = "input[id="+"'search'"+"]"
         selenium.search_element(selector)
         selenium.click_element(selector)
-
         # WRITE TEXT IN SEARCH BAR SELECTED
-        texto_pesquisa = 'aula de chinês'
+        texto_pesquisa = 'chinês mandarim básico completo aula de chinês'
         selenium.write_in_element(selector, texto_pesquisa)
 
         sleep(2)
@@ -78,13 +77,44 @@ try:
             )
         raise message_error
 
+    # Filtering the search
     try:
-
         sleep(3)
+        youtube.filter_search('TYPE', 'PLAYLIST', 'xpath')
+    except:
+        if message_error == '':
+            message_error = TypeError(
+                "Error in the process 3: filtering series list on webpage."
+            )
+        raise message_error
 
-        youtube.filter_search('features', 'location', 'xpath')
-
-        sleep(1)
+    # Entering in the correct item 
+    try:
+        sleep(3)
+        type_element='xpath'
+        selector = "//span[contains(text(), " + \
+            "'Curso de Chinês Mandarim Básico Completo'" + \
+            ")]/ancestor::a/following-sibling::yt-formatted-string/a[contains(text(), " + \
+            "'View full playlist'" + ")]"
+        selenium.click_element(selector, type_element)
+        selector = "//div[contains(@id, " + \
+            "'contents'" + \
+            ")]/ytd-playlist-video-list-renderer/div[contains(@id, " + \
+            "'contents'" + \
+            ")]/ytd-playlist-video-renderer"
+        sleep(3)
+        total_videos = selenium.counter_elements(selector, type_element='xpath')
+        counter_video = 1
+        id_video = 1
+        video_source_list = []
+        while counter_video <= total_videos:
+            selector = "//div[contains(@id, " + "'contents'" + ")]/ytd-playlist-video-list-renderer/div[contains(@id, " + "'contents'" + ")]/ytd-playlist-video-renderer[" + str(id_video) + "]/div[@id=" + "'content'" + "]/div/div[@id=" + "'meta'" + "]/h3/a"
+            attribute = 'href'
+            video_source_list.append(selenium.get_attribute(selector, attribute, type_element='xpath'))
+            id_video = id_video + 1
+            counter_video = counter_video + 1
+        
+        sleep(3)
 
     except:
         if message_error == '':

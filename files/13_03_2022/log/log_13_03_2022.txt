@@ -1,0 +1,2 @@
+Status ,Message Execution ,DateTime Initial Execution ,Time Final Execution 
+'NOK', '[Internal System Error]: Error in the process 3: filtering series list on webpage.', '13/03/2022: 12:48:26', '12:49:03'
