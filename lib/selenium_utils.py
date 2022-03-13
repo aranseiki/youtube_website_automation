@@ -39,6 +39,10 @@ def start_browser(url, browsername):
         print (f' {browsername} not avaliable. Chose one these following options: Chrome, Edge, Firefox.')
         print ('By default, it works on Edge. ')
         browser = Firefox()
+    open_link(url)
+
+
+def open_link(url):
     browser.get(url)
     wait_page_loaded()
 

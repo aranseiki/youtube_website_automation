@@ -88,7 +88,7 @@ try:
             )
         raise message_error
 
-    # Entering in the correct item 
+    # Salving the URL of video(s)
     try:
         sleep(3)
         type_element='xpath'
@@ -108,7 +108,10 @@ try:
         id_video = 1
         video_source_list = []
         while counter_video <= total_videos:
-            selector = "//div[contains(@id, " + "'contents'" + ")]/ytd-playlist-video-list-renderer/div[contains(@id, " + "'contents'" + ")]/ytd-playlist-video-renderer[" + str(id_video) + "]/div[@id=" + "'content'" + "]/div/div[@id=" + "'meta'" + "]/h3/a"
+            selector = "//div[contains(@id, " + "'contents'" + \
+            ")]/ytd-playlist-video-list-renderer/div[contains(@id, " + "'contents'" + \
+            ")]/ytd-playlist-video-renderer[" + str(id_video) + \
+            "]/div[@id=" + "'content'" + "]/div/div[@id=" + "'meta'" + "]/h3/a"
             attribute = 'href'
             video_source_list.append(selenium.get_attribute(selector, attribute, type_element='xpath'))
             id_video = id_video + 1
@@ -119,7 +122,53 @@ try:
     except:
         if message_error == '':
             message_error = TypeError(
-                "Error in the process 3: filtering series list on webpage."
+                "Error in the process 3: Colleting video link"
+            )
+        raise message_error
+
+    # Downloading video
+    try:
+        
+        url = 'https://y2mate.com'
+        selenium.open_link(url)
+
+        selector = "input[id=" + "'txt-url'" + "]"
+        text = video_source_list[0]
+        selenium.search_element(selector)
+        selenium.write_in_element(selector, text)
+        
+        selector = "button[id=" + "'btn-submit'" + "]"
+        selenium.search_element(selector)
+        selenium.click_element(selector)
+
+        load_image = ''
+        while not load_image.__contains__("display: none"):
+            selector = "img[id=" + "'loading_img'" + "]"
+            attribute = 'style'
+            load_image = selenium.get_attribute(selector, attribute)
+
+        selector = "a[href=" + "'#mp4'" + "]"
+        selenium.search_element(selector)
+        selenium.click_element(selector)
+
+        selector = "div[id=" + "'mp4'" + "] > table > tbody > tr"
+        resolutions = selenium.counter_elements(selector)
+
+        selector = selector + ":nth-child(1) > td[class=" + "'txt-center'" + "] > a"
+        selenium.search_element(selector)
+        selenium.click_element(selector)
+
+        selector = "//div[contains(@id, " + "'process-result'" + ")]/div/a[contains(@class, "+"'btn-success'" + ")]"
+        type_element = "xpath"
+        selenium.wait_element(selector, type_element)
+        selenium.click_element(selector, type_element)
+
+        ...
+        
+    except:
+        if message_error == '':
+            message_error = TypeError(
+                "Error in the process 4: Downloading"
             )
         raise message_error
 
