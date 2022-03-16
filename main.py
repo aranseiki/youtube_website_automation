@@ -13,26 +13,26 @@ try:
         current_date = dt.datetime.now().strftime('%d/%m/%Y').replace('/', '_')
         execution_initial = dt.datetime.now().strftime('%H:%M:%S')
         current_day_folder = current_date
-        export_folder = 'export'
+        download_folder = 'download'
         log_folder = 'log'
         root_path = '.\\'+'files'+'\\'
         current_day_path = (
             root_path+'\\'+current_day_folder+'\\'
         )
-        export_path = (
-            root_path+'\\'+current_day_folder+'\\'+export_folder+'\\'
+        download_path = (
+            root_path+'\\'+current_day_folder+'\\'+download_folder+'\\'
         )
         log_path = (
             root_path+'\\'+current_day_folder+'\\'+log_folder+'\\'
         )
-        csv_file_name = 'series_list_exported.csv'
+        csv_file_name = 'series_list_downloaded.csv'
         log_name = 'log_'+current_date+'.txt'
         log_file = log_path + log_name
-        csv_file = export_path + csv_file_name
+        csv_file = download_path + csv_file_name
 
         custom.create_directory(root_path)
         custom.create_directory(current_day_path)
-        custom.create_directory(export_path)
+        custom.create_directory(download_path)
         custom.create_directory(log_path)
     except:
         if message_error == '':
@@ -45,7 +45,7 @@ try:
     try:
         # OPEN THE BROWSE WITH A URL
         url = "https://www.youtube.com/"
-        browsername = 'Firefox'
+        browsername = 'chrome'
         selenium.start_browser(url, browsername)
     except:
         if message_error == '':
@@ -118,7 +118,6 @@ try:
             counter_video = counter_video + 1
         
         sleep(3)
-
     except:
         if message_error == '':
             message_error = TypeError(
@@ -128,43 +127,26 @@ try:
 
     # Downloading video
     try:
+        format = 'audio'
+        path = download_folder
+        index = 1
         
-        url = 'https://y2mate.com'
-        selenium.open_link(url)
-
-        selector = "input[id=" + "'txt-url'" + "]"
-        text = video_source_list[0]
-        selenium.search_element(selector)
-        selenium.write_in_element(selector, text)
+        for link_video in video_source_list:
+            print('index: ' + str(index))
+            output_download = youtube.download_video(link_video, format, path)
+            sleep(1)
+            filename_output = output_download.split('\\')[-1]
+            modified_filename = filename_output.replace('.mp4', '.mp3')
+            new_filename = output_download.replace(filename_output, modified_filename)
+            if os.path.exists(new_filename):
+                os.remove(new_filename)
+                sleep(1)
+            os.rename(output_download, new_filename)
+            sleep(1)
+            index = index + 1
         
-        selector = "button[id=" + "'btn-submit'" + "]"
-        selenium.search_element(selector)
-        selenium.click_element(selector)
-
-        load_image = ''
-        while not load_image.__contains__("display: none"):
-            selector = "img[id=" + "'loading_img'" + "]"
-            attribute = 'style'
-            load_image = selenium.get_attribute(selector, attribute)
-
-        selector = "a[href=" + "'#mp4'" + "]"
-        selenium.search_element(selector)
-        selenium.click_element(selector)
-
-        selector = "div[id=" + "'mp4'" + "] > table > tbody > tr"
-        resolutions = selenium.counter_elements(selector)
-
-        selector = selector + ":nth-child(1) > td[class=" + "'txt-center'" + "] > a"
-        selenium.search_element(selector)
-        selenium.click_element(selector)
-
-        selector = "//div[contains(@id, " + "'process-result'" + ")]/div/a[contains(@class, "+"'btn-success'" + ")]"
-        type_element = "xpath"
-        selenium.wait_element(selector, type_element)
-        selenium.click_element(selector, type_element)
-
         ...
-        
+
     except:
         if message_error == '':
             message_error = TypeError(
@@ -188,7 +170,7 @@ finally:
             message_error = TypeError(
                 "Error in the final process: Stopping the browser."
             )
-
+    
     if message_error == '':
         status = 'OK'
         message = 'Process have been done with success.'

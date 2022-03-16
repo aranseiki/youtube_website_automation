@@ -1,0 +1,7 @@
+Status ,Message Execution ,DateTime Initial Execution ,Time Final Execution 
+'OK', 'Process have been done with success.', '16/03/2022: 16:35:42', '16:37:35'
+'OK', 'Process have been done with success.', '16/03/2022: 16:40:56', '16:42:58'
+'OK', 'Process have been done with success.', '16/03/2022: 16:44:29', '16:46:01'
+'NOK', '[Internal System Error]: Error in the process 4: Downloading', '16/03/2022: 16:49:43', '16:50:10'
+'OK', 'Process have been done with success.', '16/03/2022: 17:06:53', '17:09:02'
+'OK', 'Process have been done with success.', '16/03/2022: 17:20:24', '17:22:27'

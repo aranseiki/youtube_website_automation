@@ -1,7 +1,7 @@
 import pdb
 from time import sleep
 # from functions_utils import *
-from selenium_functions import *
+#from selenium_functions import *
 
 
 abrir_navegador( 'chrome', url='https://youtube.com/' )

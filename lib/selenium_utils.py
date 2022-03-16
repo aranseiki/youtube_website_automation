@@ -39,12 +39,83 @@ def start_browser(url, browsername):
         print (f' {browsername} not avaliable. Chose one these following options: Chrome, Edge, Firefox.')
         print ('By default, it works on Edge. ')
         browser = Firefox()
+    browser.maximize_window()
     open_link(url)
 
 
 def open_link(url):
     browser.get(url)
     wait_page_loaded()
+
+
+def open_window():
+    """
+    Definition
+    ----------
+    Stops the Firefox browser controlled by automation.
+
+    ----------
+
+    Parameters
+    ----------
+    No parameters
+
+    ----------
+
+    Output
+    ----------
+    None
+
+    """
+    browser.execute_script('window.open()')
+
+
+def get_window_id():
+    """
+    Definition
+    ----------
+    Stops the Firefox browser controlled by automation.
+
+    ----------
+
+    Parameters
+    ----------
+    No parameters
+
+    ----------
+
+    Output
+    ----------
+    None
+
+    """
+    
+    window_id = browser.current_window_handle
+    return window_id
+
+
+def get_all_window_ids():
+    """
+    Definition
+    ----------
+    Stops the Firefox browser controlled by automation.
+
+    ----------
+
+    Parameters
+    ----------
+    No parameters
+
+    ----------
+
+    Output
+    ----------
+    None
+
+    """
+    
+    window_id = browser.window_handles
+    return window_id
 
 
 def wait_page_loaded():
@@ -412,6 +483,55 @@ def mouse_click(webelement):
     action.double_click(webelement).perform()
 
 
+def close_window(window):
+    """
+    Definition
+    ----------
+    Stops the Firefox browser controlled by automation.
+
+    ----------
+
+    Parameters
+    ----------
+    No parameters
+
+    ----------
+
+    Output
+    ----------
+    None
+
+    """
+    browser.switch_to.window(window)
+    browser.close()
+
+
+def close_all_windows_but_this(window_id):
+    """
+    Definition
+    ----------
+    Stops the Firefox browser controlled by automation.
+
+    ----------
+
+    Parameters
+    ----------
+    No parameters
+
+    ----------
+
+    Output
+    ----------
+    None
+
+    """
+    windows_list = browser.window_handles
+    for window in windows_list:
+        if window != window_id:
+            browser.switch_to.window(window)
+            browser.close()
+
+
 def stop_browser():
     """
     Definition
@@ -431,4 +551,9 @@ def stop_browser():
     None
 
     """
-    browser.close()
+    windows_list = len(browser.window_handles)
+
+    while windows_list > 0:
+        window = browser.window_handles[0]
+        close_window(window)
+        windows_list = windows_list - 1

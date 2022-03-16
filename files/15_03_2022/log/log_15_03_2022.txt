@@ -1,0 +1,4 @@
+Status ,Message Execution ,DateTime Initial Execution ,Time Final Execution 
+'NOK', '[Internal System Error]: Error in the process 4: Downloading', '15/03/2022: 17:50:09', '17:50:44'
+'NOK', '[Internal System Error]: Error in the process 4: Downloading', '15/03/2022: 17:55:26', '17:55:58'
+'OK', 'Process have been done with success.', '15/03/2022: 18:01:24', '16:00:41'

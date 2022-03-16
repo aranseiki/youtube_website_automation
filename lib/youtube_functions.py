@@ -109,3 +109,18 @@ def filter_search(filter_group_name, filter_item_name, type_element='CSS_SELECTO
     select_filter_element(group, item, type_element)
     status = 'close'
     filter_menu(status)
+
+
+def download_video(link_video, format, path = None):
+    from pytube import YouTube
+    if format.upper() == 'AUDIO':
+        stream_list = YouTube(link_video).streams.filter(only_audio=True, file_extension='mp4')
+        stream_choosed = stream_list.order_by('abr').desc()[0]
+    elif format.upper() == 'VIDEO':
+        stream_list = YouTube(link_video).streams.filter(only_video=True, file_extension='mp4')
+        stream_choosed = stream_list.order_by('res').desc()[0]
+    else:
+        TypeError('Format invalid.')
+    output_download = stream_choosed.download(output_path=path)
+    return output_download
+        
