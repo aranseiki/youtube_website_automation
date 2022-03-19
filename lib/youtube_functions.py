@@ -124,3 +124,23 @@ def download_video(link_video, format, path = None):
     output_download = stream_choosed.download(output_path=path)
     return output_download
         
+
+def menu_horizontal_in_channel(tab_name):
+    if tab_name.upper() == 'HOME':
+        index = 1
+    if tab_name.upper() == 'VIDEOS':
+        index = 2
+    if tab_name.upper() == 'PLAYLISTS':
+        index = 3
+    if tab_name.upper() == 'COMMUNITY':
+        index = 4
+    if tab_name.upper() == 'STORE':
+        index = 5
+    if tab_name.upper() == 'CNANNELS':
+        index = 6
+    if tab_name.upper() == 'ABOUT':
+        index = 7
+    selector = "(//div[@id=" + "'tabsContent'" + "]/tp-yt-paper-tab)[" + str(index) + "]"
+    selenium.search_element(selector, type_element)
+    selenium.click_element(selector, type_element)
+        

@@ -61,7 +61,7 @@ try:
         selenium.search_element(selector)
         selenium.click_element(selector)
         # WRITE TEXT IN SEARCH BAR SELECTED
-        texto_pesquisa = 'chinês mandarim básico completo aula de chinês'
+        texto_pesquisa = 'Avril Lavigne'
         selenium.write_in_element(selector, texto_pesquisa)
 
         sleep(2)
@@ -80,7 +80,7 @@ try:
     # Filtering the search
     try:
         sleep(3)
-        youtube.filter_search('TYPE', 'PLAYLIST', 'xpath')
+        youtube.filter_search('TYPE', 'channel', 'xpath')
     except:
         if message_error == '':
             message_error = TypeError(
@@ -88,20 +88,30 @@ try:
             )
         raise message_error
 
-    # Salving the URL of video(s)
     try:
         sleep(3)
         type_element='xpath'
-        selector = "//span[contains(text(), " + \
-            "'Curso de Chinês Mandarim Básico Completo'" + \
-            ")]/ancestor::a/following-sibling::yt-formatted-string/a[contains(text(), " + \
-            "'View full playlist'" + ")]"
+        channel_name = 'Avril Lavigne'
+        selector = "//div[@id=" + "'upload-info'" + "]/ytd-channel-name[@id=" + "'channel-name'" + "]/div[@id=" + "'container'" + "]/div/yt-formatted-string[contains(@class," + "'ytd-channel-name'" + ") and contains(@id, " + "'text'" + ")]/a[text()='" + channel_name + "']" # Erro
+        
+        sleep(3)
+        tab_name = 'Playlist'
+        youtube.menu_horizontal_in_channel(tab_name)
+        
+        playlist_name = 'Love Sux'
+        selector = "//div[@id='items']/ytd-grid-playlist-renderer/h3/a[text()='"+ playlist_name +"']/ancestor::h3/following-sibling::yt-formatted-string"
         selenium.click_element(selector, type_element)
-        selector = "//div[contains(@id, " + \
-            "'contents'" + \
-            ")]/ytd-playlist-video-list-renderer/div[contains(@id, " + \
-            "'contents'" + \
-            ")]/ytd-playlist-video-renderer"
+
+    except:
+        if message_error == '':
+            message_error = TypeError(
+                "Error in the process 4: Localizing the playlist"
+            )
+        raise message_error
+
+    # Salving the URL of video(s)
+    try:
+        
         sleep(3)
         total_videos = selenium.counter_elements(selector, type_element='xpath')
         counter_video = 1
@@ -128,7 +138,17 @@ try:
     # Downloading video
     try:
         format = 'audio'
-        path = download_folder
+        path = download_path + '\\' + texto_pesquisa.replace('\\', ' ') \
+                                                                    .replace('/', ' ') \
+                                                                    .replace('//',  '') \
+                                                                    .replace(':', ' ') \
+                                                                    .replace('*', ' ') \
+                                                                    .replace('?', ' ') \
+                                                                    .replace('"', ' ') \
+                                                                    .replace("'", ' ') \
+                                                                    .replace('<', ' ') \
+                                                                    .replace('>', ' ') \
+                                                                    .replace('|', ' ')
         index = 1
         
         for link_video in video_source_list:
@@ -139,14 +159,18 @@ try:
             modified_filename = filename_output.replace('.mp4', '.mp3')
             new_filename = output_download.replace(filename_output, modified_filename)
             if os.path.exists(new_filename):
+                new_filename_boolean = True
                 os.remove(new_filename)
+                while new_filename_boolean == True:
+                    if not os.path.exists(new_filename):
+                        new_filename_boolean = False
+                        print('Pronto! ')
                 sleep(1)
             os.rename(output_download, new_filename)
             sleep(1)
             index = index + 1
         
         ...
-
     except:
         if message_error == '':
             message_error = TypeError(
