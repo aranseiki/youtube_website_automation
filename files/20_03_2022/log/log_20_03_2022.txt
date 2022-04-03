@@ -1,0 +1,3 @@
+Status ,Message Execution ,DateTime Initial Execution ,Time Final Execution 
+'NOK', '[Internal System Error]: Error in the process 3: Colleting video link', '20/03/2022: 09:45:44', '09:47:47'
+'OK', 'Process have been done with success.', '20/03/2022: 10:20:03', '11:20:14'

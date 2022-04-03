@@ -126,6 +126,8 @@ def download_video(link_video, format, path = None):
         
 
 def menu_horizontal_in_channel(tab_name):
+    index = 1
+    type_element = 'xpath'
     if tab_name.upper() == 'HOME':
         index = 1
     if tab_name.upper() == 'VIDEOS':

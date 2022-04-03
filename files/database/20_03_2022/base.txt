@@ -1,0 +1,2 @@
+text search, filter search, channel name, official channel, playlist name
+sirenia,channel,Sirenia,yes,Arcane Astral Aeons
