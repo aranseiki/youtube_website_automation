@@ -39,26 +39,16 @@ try:
         
         basefile = open(basefile_path, 'r', encoding='utf8')
         basefile = basefile.read().split('\n')
-        index = 1
+        index = 0
         for item in basefile:
-            basefile[index - 1] = item.split(',')
+            basefile[index] = item.split(',')
             index = index + 1
-        
-        basefile
-
     except:
         if message_error == '':
             message_error = TypeError(
                 "Error in the initial process: Preparing the environment."
             )
         raise message_error
-
-    # Preparing the datalist from base file
-    try :
-        datalist = []
-
-    except:
-        ...
 
     # Access the webpage required by user with browser
     try:
@@ -73,6 +63,15 @@ try:
             )
         raise message_error
     
+    i = 0
+    for line in basefile.length:
+        text_search = line[0]
+        filter_search = line[1]
+        channel_name = line[2]
+        official_channel = line[3]
+        playlist_name = line[4]
+
+    sleep(1)
     # Search text on site
     try:
         # SELECT SEARCH BAR
