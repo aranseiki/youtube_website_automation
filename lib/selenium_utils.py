@@ -32,7 +32,7 @@ def start_browser(url, browsername):
     if browsername.upper().__contains__('CHROME'):
         browser = Chrome()
     elif browsername.upper().__contains__('EDGE'):
-        browser = Edge()
+        browser = Edge(executable_path='C:\\tools\\selenium\\msedgedriver')
     elif browsername.upper().__contains__('FIREFOX'):
         browser = Firefox()
     else:

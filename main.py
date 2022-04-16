@@ -12,18 +12,18 @@ try:
         message_error = ''
         current_date = dt.datetime.now().strftime('%d/%m/%Y').replace('/', '_')
         execution_initial = dt.datetime.now().strftime('%H:%M:%S')
-        current_day_folder = current_date
-        download_folder = 'download'
-        log_folder = 'log'
+        current_day_folder = current_date + '\\'
+        download_folder = 'download' + '\\'
+        log_folder = 'log' + '\\'
         root_path = '.\\'+'files'+'\\'
         current_day_path = (
-            root_path+'\\'+current_day_folder+'\\'
+            root_path + current_day_folder
         )
         download_path = (
-            root_path+'\\'+current_day_folder+'\\'+download_folder+'\\'
+            root_path + current_day_folder + download_folder
         )
         log_path = (
-            root_path+'\\'+current_day_folder+'\\'+log_folder+'\\'
+            root_path + current_day_folder + log_folder
         )
         csv_file_name = 'series_list_downloaded.csv'
         log_name = 'log_'+current_date+'.txt'
@@ -54,7 +54,7 @@ try:
     try:
         # OPEN THE BROWSE WITH A URL
         url = "https://www.youtube.com/"
-        browsername = 'chrome'
+        browsername = 'edge'
         selenium.start_browser(url, browsername)
     except:
         if message_error == '':
@@ -62,179 +62,194 @@ try:
                 "Error in the process 1: Starting browser."
             )
         raise message_error
+        
+    parameters = {
+        'text_search' : [], 
+        'filter_search' : [],
+        'channel_name' : [],
+        'official_channel' : [],
+        'playlist_name' : []
+    }
     
-    i = 0
-    for line in basefile.length:
-        text_search = line[0]
-        filter_search = line[1]
-        channel_name = line[2]
-        official_channel = line[3]
-        playlist_name = line[4]
+    for line in basefile:
+        parameters['text_search'].append(line[0])
+        parameters['filter_search'].append(line[1])
+        parameters['channel_name'].append(line[2])
+        parameters['official_channel'].append(line[3])
+        parameters['playlist_name'].append(line[4])
+    
+    parameter_index = 1
+    while parameter_index < len(parameters['text_search']):
+        
+        # Search text on site
+        try:
+            # SELECT SEARCH BAR
+            selector = "input[id="+"'search'"+"]"
+            selenium.search_element(selector)
+            selenium.click_element(selector)
+            # WRITE TEXT IN SEARCH BAR SELECTED
+            texto_pesquisa = parameters['text_search'][parameter_index]
+            selenium.write_in_element(selector, texto_pesquisa)
 
-    sleep(1)
-    # Search text on site
-    try:
-        # SELECT SEARCH BAR
-        selector = "input[id="+"'search'"+"]"
-        selenium.search_element(selector)
-        selenium.click_element(selector)
-        # WRITE TEXT IN SEARCH BAR SELECTED
-        texto_pesquisa = 'Sirenia'
-        selenium.write_in_element(selector, texto_pesquisa)
+            sleep(2)
 
-        sleep(2)
+            # CLICKS IN SEARCH ICON
+            selector = "ytd-masthead > \
+                div:nth-child(4) > \
+                div:nth-child(2) > \
+                ytd-searchbox > \
+                button > \
+                yt-icon"
+            selenium.search_element(selector)
+            selenium.click_element(selector)
 
-        # CLICKS IN SEARCH ICON
-        selector = "ytd-masthead > \
-            div:nth-child(4) > \
-            div:nth-child(2) > \
-            ytd-searchbox > \
-            button > \
-            yt-icon"
-        selenium.search_element(selector)
-        selenium.click_element(selector)
+            # Filtering the search
+            sleep(3)
+            youtube.filter_search('TYPE', parameters['filter_search'][parameter_index], 'xpath')
+        except:
+            if message_error == '':
+                message_error = TypeError(
+                    "Error in the process 2: searching text on website."
+                )
+            raise message_error
 
-        # Filtering the search
-        sleep(3)
-        youtube.filter_search('TYPE', 'channel', 'xpath')
-    except:
-        if message_error == '':
-            message_error = TypeError(
-                "Error in the process 2: searching text on website."
-            )
-        raise message_error
+        # Localizing the video
+        try:
+            sleep(3)
+            type_element='xpath'
+            channel_name = parameters['channel_name'][parameter_index]
+            selector = "//div[@id=" + \
+                "'contents'" + \
+                "]/ytd-channel-renderer/div[@id=" + \
+                "'content-section'" + \
+                "]/div[@id=" + \
+                "'info-section'" + \
+                "]/a/div[@id=" + \
+                "'info'" + \
+                "]/ytd-channel-name/div/div/\
+                yt-formatted-string[text()='" + channel_name + "']"
+            
+            if parameters['official_channel'][parameter_index].upper() == 'YES':
+                official_channel = True
+            else:
+                official_channel = False
 
-    # Localizing the video
-    try:
-        sleep(3)
-        type_element='xpath'
-        channel_name = 'Sirenia'
-        selector = "//div[@id=" + \
-            "'contents'" + \
-            "]/ytd-channel-renderer/div[@id=" + \
-            "'content-section'" + \
-            "]/div[@id=" + \
-            "'info-section'" + \
-            "]/a/div[@id=" + \
-            "'info'" + \
-            "]/ytd-channel-name/div/div/\
-            yt-formatted-string[text()='" + channel_name + "']"
-        official_channel = True
-        if official_channel == True:
-            selector = selector + "/ancestor::div/ancestor::div/\
-                ancestor::ytd-channel-name/ytd-badge-supported-renderer\
-                /div[@aria-label=" + \
-                "'Official Artist Channel'" + "]"
-        selenium.search_element(selector, type_element)
-        selenium.click_element(selector, type_element)
-        sleep(3)
+            if official_channel == True:
+                selector = selector + "/ancestor::div/ancestor::div/\
+                    ancestor::ytd-channel-name/ytd-badge-supported-renderer\
+                    /div[@aria-label=" + \
+                    "'Official Artist Channel'" + "]"
+            selenium.search_element(selector, type_element)
+            selenium.click_element(selector, type_element)
+            sleep(3)
 
-        tab_name = 'Playlists'
-        youtube.menu_horizontal_in_channel(tab_name)
-        sleep(1)
+            tab_name = 'Playlists'
+            youtube.menu_horizontal_in_channel(tab_name)
+            sleep(1)
 
-        playlist_name = 'Arcane Astral Aeons'
-        selector = "//div[@id=" + \
-            "'items'" + \
-            "]/ytd-grid-playlist-renderer/h3/a[text()='" + \
-            playlist_name + \
-            "']/ancestor::h3/following-sibling::yt-formatted-string"
-        selenium.click_element(selector, type_element)
-    except:
-        if message_error == '':
-            message_error = TypeError(
-                "Error in the process 4: Localizing the video"
-            )
-        raise message_error
+            playlist_name = parameters['playlist_name'][parameter_index]
+            selector = "//div[@id=" + \
+                "'items'" + \
+                "]/ytd-grid-playlist-renderer/h3/a[text()='" + \
+                playlist_name + \
+                "']/ancestor::h3/following-sibling::yt-formatted-string"
+            selenium.click_element(selector, type_element)
+        except:
+            if message_error == '':
+                message_error = TypeError(
+                    "Error in the process 4: Localizing the video"
+                )
+            raise message_error
 
-    # Salving the URL of video(s) in the local list
-    try:
-        sleep(3)
-        selector = "//div[contains(@id, " + \
-            "'contents'" + \
-            ")]/ytd-playlist-video-list-renderer/div[contains(@id, " + \
-            "'contents'" + \
-            ")]/ytd-playlist-video-renderer"
-        total_videos = selenium.counter_elements(
-            selector, type_element='xpath'
-        )
-        counter_video = 1
-        id_video = 1
-        video_source_list = []
-        while counter_video <= total_videos:
+        # Salving the URL of video(s) in the local list
+        try:
+            sleep(3)
             selector = "//div[contains(@id, " + \
                 "'contents'" + \
                 ")]/ytd-playlist-video-list-renderer/div[contains(@id, " + \
                 "'contents'" + \
-                ")]/ytd-playlist-video-renderer[" + \
-                str(id_video) + \
-                "]/div[@id=" + \
-                "'content'" + \
-                "]/div/div[@id=" + \
-                "'meta'" + \
-                "]/h3/a"
-            attribute = 'href'
-            video_source_list.append(
-                selenium.get_attribute(
-                    selector, attribute, type_element='xpath'
+                ")]/ytd-playlist-video-renderer"
+            total_videos = selenium.counter_elements(
+                selector, type_element='xpath'
+            )
+            counter_video = 1
+            id_video = 1
+            video_source_list = []
+            while counter_video <= total_videos:
+                selector = "//div[contains(@id, " + \
+                    "'contents'" + \
+                    ")]/ytd-playlist-video-list-renderer/div[contains(@id, " + \
+                    "'contents'" + \
+                    ")]/ytd-playlist-video-renderer[" + \
+                    str(id_video) + \
+                    "]/div[@id=" + \
+                    "'content'" + \
+                    "]/div/div[@id=" + \
+                    "'meta'" + \
+                    "]/h3/a"
+                attribute = 'href'
+                video_source_list.append(
+                    selenium.get_attribute(
+                        selector, attribute, type_element='xpath'
+                    )
                 )
-            )
-            id_video = id_video + 1
-            counter_video = counter_video + 1
+                id_video = id_video + 1
+                counter_video = counter_video + 1
         
-        sleep(3)
-    except:
-        if message_error == '':
-            message_error = TypeError(
-                "Error in the process 3: Colleting video link"
-            )
-        raise message_error
+            sleep(3)
+        except:
+            if message_error == '':
+                message_error = TypeError(
+                    "Error in the process 3: Colleting video link"
+                )
+            raise message_error
 
-    # Downloading video
-    try:
-        format = 'audio'
-        path = download_path + \
-        '\\' + \
-        texto_pesquisa.replace('\\', ' ') \
-            .replace('/', ' ') \
-            .replace('//',  '') \
-            .replace(':', ' ') \
-            .replace('*', ' ') \
-            .replace('?', ' ') \
-            .replace('"', ' ') \
-            .replace("'", ' ') \
-            .replace('<', ' ') \
-            .replace('>', ' ') \
-            .replace('|', ' ')
-        index = 1
+        # Downloading video
+        try:
+            format = 'audio'
+            path = download_path + \
+            texto_pesquisa.replace('\\', ' ') \
+                .replace('/', ' ') \
+                .replace('//',  '') \
+                .replace(':', ' ') \
+                .replace('*', ' ') \
+                .replace('?', ' ') \
+                .replace('"', ' ') \
+                .replace("'", ' ') \
+                .replace('<', ' ') \
+                .replace('>', ' ') \
+                .replace('|', ' ')
+            index = 1
         
-        for link_video in video_source_list:
-            print('index: ' + str(index))
-            output_download = youtube.download_video(link_video, format, path)
-            sleep(1)
-            filename_output = output_download.split('\\')[-1]
-            modified_filename = filename_output.replace('.mp4', '.mp3')
-            new_filename = output_download.replace(
-                filename_output, modified_filename
-            )
-            if os.path.exists(new_filename):
-                new_filename_boolean = True
-                os.remove(new_filename)
-                while new_filename_boolean == True:
-                    if not os.path.exists(new_filename):
-                        new_filename_boolean = False
+            for link_video in video_source_list:
+                print('index: ' + str(index))
+                output_download = youtube.download_video(link_video, format, path)
                 sleep(1)
-            os.rename(output_download, new_filename)
-            sleep(1)
-            index = index + 1
+                filename_output = output_download.split('\\')[-1]
+                modified_filename = filename_output.replace('.mp4', '.mp3')
+                new_filename = output_download.replace(
+                    filename_output, modified_filename
+                )
+                if os.path.exists(new_filename):
+                    new_filename_boolean = True
+                    os.remove(new_filename)
+                    while new_filename_boolean == True:
+                        if not os.path.exists(new_filename):
+                            new_filename_boolean = False
+                    sleep(1)
+                os.rename(output_download, new_filename)
+                sleep(1)
+                index = index + 1
         
-        ...
-    except:
-        if message_error == '':
-            message_error = TypeError(
-                "Error in the process 4: Downloading"
-            )
-        raise message_error
+            ...
+        except:
+            if message_error == '':
+                message_error = TypeError(
+                    "Error in the process 4: Downloading"
+                )
+            raise message_error
+        
+        parameter_index = parameter_index + 1
 
 except:
     if not str(message_error).__contains__('[Internal Business Error]'):
